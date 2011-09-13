@@ -31,7 +31,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.  */
    may be connected along with the 11AA02E48 if the application needs
    extra non-volatile storage space. */
 
+/* The 11AA02E48 has address 0xa0; the MAC address is stored at offset
+   0xfa within it. */
 #define NANODE_MAC_DEVICE 0xa0
+#define NANODE_MAC_ADDRESS 0xfa
 
 /* Microchip indicate that there may be more device types coming for
    this bus - temperature sensors, display controllers, I/O port
