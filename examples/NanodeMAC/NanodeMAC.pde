@@ -6,7 +6,7 @@ void setup() {
   NanodeUNIO unio(NANODE_MAC_DEVICE);
   boolean r;
 
-  Serial.begin(9600);
+  Serial.begin(38400);
   Serial.println("Nanode MAC reader\n");
   Serial.print("Reading MAC address... ");
   r=unio.read(macaddr,NANODE_MAC_ADDRESS,6);
