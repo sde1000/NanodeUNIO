@@ -76,53 +76,50 @@ static void unio_standby_pulse(void) {
 }
 
 /* While bit-banging, all delays are expressed in terms of quarter
-   bits.  We try to ensure the code paths for reading and writing a
-   bit are the same length.  During a write, we perform dummy reads at
-   1/4 and 3/4 of the way through each bit time.  During a read we
-   perform a dummy write at the start and 1/2 way through each bit
-   time. */
+   bits.  We use the same code path for reading and writing.  During a
+   write, we perform dummy reads at 1/4 and 3/4 of the way through
+   each bit time.  During a read we perform a dummy write at the start
+   and 1/2 way through each bit time. */
 
-static volatile void send_bit(boolean bit) {
-  set_bus(!bit);
-  delayMicroseconds(UNIO_QUARTER_BIT);
-  read_bus();
-  delayMicroseconds(UNIO_QUARTER_BIT);
-  set_bus(bit);
-  delayMicroseconds(UNIO_QUARTER_BIT);
-  read_bus();
-  delayMicroseconds(UNIO_QUARTER_BIT);
-}
-
-static volatile boolean read_bit() {
+static volatile boolean rwbit(boolean w) {
   boolean a,b;
-  UNIO_INPUT();
+  set_bus(!w);
   delayMicroseconds(UNIO_QUARTER_BIT);
   a=read_bus();
   delayMicroseconds(UNIO_QUARTER_BIT);
-  set_bus(1);
+  set_bus(w);
   delayMicroseconds(UNIO_QUARTER_BIT);
   b=read_bus();
   delayMicroseconds(UNIO_QUARTER_BIT);
-  UNIO_OUTPUT();
   return b&&!a;
+}
+
+static boolean read_bit(void) {
+  boolean b;
+  UNIO_INPUT();
+  b=rwbit(1);
+  UNIO_OUTPUT();
+  return b;
 }
 
 static boolean send_byte(byte b, boolean mak) {
   for (int i=0; i<8; i++) {
-    send_bit(b&0x80);
+    rwbit(b&0x80);
     b<<=1;
   }
-  send_bit(mak);
+  rwbit(mak);
   return read_bit();
 }
 
 static boolean read_byte(byte *b, boolean mak) {
   byte data=0;
+  UNIO_INPUT();
   for (int i=0; i<8; i++) {
-    data = (data << 1) | read_bit();
+    data = (data << 1) | rwbit(1);
   }
+  UNIO_OUTPUT();
   *b=data;
-  send_bit(mak);
+  rwbit(mak);
   return read_bit();
 }
 
