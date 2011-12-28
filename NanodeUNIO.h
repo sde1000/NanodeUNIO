@@ -22,7 +22,11 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.  */
 #ifndef _NANODEUNIO_LIB_H
 #define _NANODEUNIO_LIB_H
 
-#include <WProgram.h>
+#if ARDUINO >= 100
+  #include <Arduino.h> // Arduino 1.0
+#else
+  #include <WProgram.h> // Arduino 0022
+#endif
 
 /* Class to access Microchip UNI/O devices connected to pin 7 of the
    Nanode, such as the 11AA02E48 MAC address chip.  Multiple UNI/O
