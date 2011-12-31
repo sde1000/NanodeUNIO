@@ -125,7 +125,7 @@ static boolean read_byte(byte *b, boolean mak) {
 /* Send data on the bus. If end is true, send NoMAK after the last
    byte; otherwise send MAK. */
 static boolean unio_send(const byte *data,word length,boolean end) {
-  for (int i=0; i<length; i++) {
+  for (word i=0; i<length; i++) {
     /* Rules for sending MAK: if it's the last byte and end is true,
        send NoMAK.  Otherwise send MAK. */
     if (!send_byte(data[i],!(((i+1)==length) && end))) return false;
@@ -136,7 +136,7 @@ static boolean unio_send(const byte *data,word length,boolean end) {
 /* Read data from the bus.  After reading 'length' bytes, send NoMAK to
    terminate the command. */
 static boolean unio_read(byte *data,word length)  {
-  for (int i=0; i<length; i++) {
+  for (word i=0; i<length; i++) {
     if (!read_byte(data+i,!((i+1)==length))) return false;
   }
   return true;
